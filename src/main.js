@@ -45,4 +45,13 @@ export default async ({ req, res, log, error }) => {
       "message": "An error occurred while making the request."
     })
   }
+
+  return req.json({
+    "success": true,
+    "message": "Successfully responded to the daily question.",
+    "selectedEmotion": selectedEmotion,
+    "response": {
+      data: await response.json()
+    }
+  });
 };
