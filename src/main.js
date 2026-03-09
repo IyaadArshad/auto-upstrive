@@ -80,7 +80,7 @@ async function handleApiResponse(response) {
 export default async ({ _req, res, log, error }) => {
   // Validate environment on startup
   if (!validateEnvironment()) {
-    return res.json(
+    res.json(
       {
         success: false,
         message:
@@ -88,6 +88,7 @@ export default async ({ _req, res, log, error }) => {
       },
       500
     );
+    return;
   }
 
   try {
@@ -136,7 +137,7 @@ export default async ({ _req, res, log, error }) => {
     log('API request successful');
 
     // Return success response
-    return res.json({
+    res.json({
       success: true,
       message: 'Successfully responded to the daily question.',
       selectedEmotion: selectedEmotion,
@@ -144,49 +145,54 @@ export default async ({ _req, res, log, error }) => {
         data: apiData,
       },
     });
+    return;
   } catch (err) {
     // Handle different types of errors
     if (err.name === 'AbortError') {
       error('Request timed out');
-      return res.json(
+      res.json(
         {
           success: false,
           message: 'Request timed out. Please try again.',
         },
         408
       );
+      return;
     }
 
     if (err.message.includes('Failed to parse API response')) {
       error(`JSON parsing error: ${err.message}`);
-      return res.json(
+      res.json(
         {
           success: false,
           message: 'Invalid response from server. Please try again later.',
         },
         502
       );
+      return;
     }
 
     if (err.message.includes('API request failed')) {
       error(`API error: ${err.message}`);
-      return res.json(
+      res.json(
         {
           success: false,
           message: 'External service error. Please try again later.',
         },
         502
       );
+      return;
     }
 
     // Generic error handling
     error(`Unexpected error: ${err.message}`);
-    return res.json(
+    res.json(
       {
         success: false,
         message: 'An unexpected error occurred. Please try again.',
       },
       500
     );
+    return;
   }
 };
