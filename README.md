@@ -1,35 +1,42 @@
-# ⚡ Node.js Starter Function
+# ⚡ Auto Upstrive Daily Question Responder
 
-A simple starter function. Edit `src/main.js` to get started and create something awesome! 🚀
+An automated serverless function that responds to daily questions on the Upstrive platform with randomly selected positive emotions. 🚀
 
 ## 🧰 Usage
 
-### GET /ping
+### POST /
 
-- Returns a "Pong" message.
+Automatically responds to the daily question with a random positive emotion.
 
-**Response**
+**Required Environment Variables:**
 
-Sample `200` Response:
-
-```text
-Pong
-```
-
-### GET, POST, PUT, PATCH, DELETE /
-
-- Returns a "Learn More" JSON response.
+- `AUTH_HEADER`: Authorization token for the Upstrive API
+- `USER_ID`: User ID for the Upstrive platform
+- `API_BASE_URL`: (Optional) Base URL for the API (defaults to `https://api.upstrivesystem.com`)
 
 **Response**
 
-Sample `200` Response:
+Sample `200` Success Response:
 
 ```json
 {
-  "motto": "Build like a team of hundreds_",
-  "learn": "https://appwrite.io/docs",
-  "connect": "https://appwrite.io/discord",
-  "getInspired": "https://builtwith.appwrite.io"
+  "success": true,
+  "message": "Successfully responded to the daily question.",
+  "selectedEmotion": "happy",
+  "response": {
+    "data": {
+      // API response data
+    }
+  }
+}
+```
+
+Sample Error Response:
+
+```json
+{
+  "success": false,
+  "message": "An unexpected error occurred. Please try again."
 }
 ```
 
@@ -37,12 +44,27 @@ Sample `200` Response:
 
 | Setting           | Value         |
 | ----------------- | ------------- |
-| Runtime           | Node (18.0)   |
+| Runtime           | Node (18.0+)  |
 | Entrypoint        | `src/main.js` |
 | Build Commands    | `npm install` |
 | Permissions       | `any`         |
-| Timeout (Seconds) | 15            |
+| Timeout (Seconds) | 30            |
 
 ## 🔒 Environment Variables
 
-No environment variables required.
+| Variable     | Description                        | Required |
+| ------------ | ---------------------------------- | -------- |
+| AUTH_HEADER  | Authorization token for API access | Yes      |
+| USER_ID      | User identifier                    | Yes      |
+| API_BASE_URL | Base URL for the API (optional)    | No       |
+
+## 📦 Dependencies
+
+- Node.js 18.0+
+- No external runtime dependencies (uses built-in fetch API)
+
+## 🚀 Deployment
+
+1. Set the required environment variables
+2. Deploy to your serverless platform
+3. Configure the function to trigger as needed (e.g., daily cron job)

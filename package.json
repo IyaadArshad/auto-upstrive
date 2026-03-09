@@ -1,16 +1,33 @@
 {
-  "name": "starter-template",
+  "name": "auto-upstrive",
   "version": "1.0.0",
-  "description": "",
+  "description": "Automated daily question responder for Upstrive platform",
   "main": "src/main.js",
   "type": "module",
   "scripts": {
-    "format": "prettier --write ."
+    "start": "node src/main.js",
+    "format": "npx prettier --write .",
+    "lint": "npx eslint src/",
+    "lint:fix": "npx eslint src/ --fix",
+    "test": "node --test",
+    "validate": "npm run lint && npm run test"
+  },
+  "keywords": [
+    "serverless",
+    "automation",
+    "api",
+    "upstrive"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
   },
   "dependencies": {
     "node-appwrite": "^20.2.1"
   },
   "devDependencies": {
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "eslint": "^8.57.0"
   }
 }
