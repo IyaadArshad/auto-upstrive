@@ -71,16 +71,16 @@ async function handleApiResponse(response) {
 /**
  * Main serverless function handler
  * @param {Object} params - Function parameters
- * @param {Object} params.req - Request object
- * @param {Object} params._res - Response object (unused)
+ * @param {Object} params._req - Request object (unused)
+ * @param {Object} params.res - Response object
  * @param {Function} params.log - Logging function
  * @param {Function} params.error - Error logging function
  * @returns {Object} JSON response
  */
-export default async ({ req, _res, log, error }) => {
+export default async ({ _req, res, log, error }) => {
   // Validate environment on startup
   if (!validateEnvironment()) {
-    return req.json(
+    return res.json(
       {
         success: false,
         message:
@@ -136,7 +136,7 @@ export default async ({ req, _res, log, error }) => {
     log('API request successful');
 
     // Return success response
-    return req.json({
+    return res.json({
       success: true,
       message: 'Successfully responded to the daily question.',
       selectedEmotion: selectedEmotion,
@@ -148,7 +148,7 @@ export default async ({ req, _res, log, error }) => {
     // Handle different types of errors
     if (err.name === 'AbortError') {
       error('Request timed out');
-      return req.json(
+      return res.json(
         {
           success: false,
           message: 'Request timed out. Please try again.',
@@ -159,7 +159,7 @@ export default async ({ req, _res, log, error }) => {
 
     if (err.message.includes('Failed to parse API response')) {
       error(`JSON parsing error: ${err.message}`);
-      return req.json(
+      return res.json(
         {
           success: false,
           message: 'Invalid response from server. Please try again later.',
@@ -170,7 +170,7 @@ export default async ({ req, _res, log, error }) => {
 
     if (err.message.includes('API request failed')) {
       error(`API error: ${err.message}`);
-      return req.json(
+      return res.json(
         {
           success: false,
           message: 'External service error. Please try again later.',
@@ -181,7 +181,7 @@ export default async ({ req, _res, log, error }) => {
 
     // Generic error handling
     error(`Unexpected error: ${err.message}`);
-    return req.json(
+    return res.json(
       {
         success: false,
         message: 'An unexpected error occurred. Please try again.',
