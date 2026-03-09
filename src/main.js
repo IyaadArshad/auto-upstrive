@@ -38,6 +38,15 @@ export default async ({ req, res, log, error }) => {
         "reasonsList": []
       })
     });
+
+    return req.json({
+      "success": true,
+      "message": "Successfully responded to the daily question.",
+      "selectedEmotion": selectedEmotion,
+      "response": {
+        data: await response.json()
+      }
+    });
   } catch (err) {
     error(err);
     return req.json({
@@ -45,13 +54,4 @@ export default async ({ req, res, log, error }) => {
       "message": "An error occurred while making the request."
     })
   }
-
-  return req.json({
-    "success": true,
-    "message": "Successfully responded to the daily question.",
-    "selectedEmotion": selectedEmotion,
-    "response": {
-      data: await response.json()
-    }
-  });
 };
