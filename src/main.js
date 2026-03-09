@@ -1,35 +1,48 @@
-import { Client, Users } from 'node-appwrite';
+const AuthorizationHeader = process.env.AUTH_HEADER
+const UserId = process.env.USER_ID
 
-// This Appwrite function will be executed every time your function is triggered
 export default async ({ req, res, log, error }) => {
-  // You can use the Appwrite SDK to interact with other services
-  // For this example, we're using the Users service
-  const client = new Client()
-    .setEndpoint(process.env.APPWRITE_FUNCTION_API_ENDPOINT)
-    .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
-    .setKey(req.headers['x-appwrite-key'] ?? '');
-  const users = new Users(client);
+
+  const emotions = [
+    "happy",
+    "ecstatic",
+    "inspired",
+    "calm"
+  ]
+
+  const selectedEmotion = emotions[Math.floor(Math.random() * emotions.length)];
+
+  if (!AuthorizationHeader || !UserId) {
+    return req.json({
+      "success": false,
+      "message": "Required environment variables are not set."
+    });
+  }
 
   try {
-    const response = await users.list();
-    // Log messages and errors to the Appwrite Console
-    // These logs won't be seen by your end users
-    log(`Total users: ${response.total}`);
-  } catch(err) {
-    error("Could not list users: " + err.message);
-  }
+    // POST Request to 	https://api.upstrivesystem.com/api/respondToDailyQuestion
 
-  // The req object contains the request data
-  if (req.path === "/ping") {
-    // Use res object to respond with text(), json(), or binary()
-    // Don't forget to return a response!
-    return res.text("Pong");
+    const response = await fetch('https://api.upstrivesystem.com/api/respondToDailyQuestion', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': process.env.AUTH_HEADER
+      },
+      body: JSON.stringify({
+        "emotion": selectedEmotion,
+        "created_date": Date.now(),
+        "user_id": UserId,
+        "type": "daily",
+        "day_code": new Date().toISOString().slice(0, 10),
+        "message": "",
+        "reasonsList": []
+      })
+    });
+  } catch (err) {
+    error(err);
+    return req.json({
+      "success": false,
+      "message": "An error occurred while making the request."
+    })
   }
-
-  return res.json({
-    motto: "Build like a team of hundreds_",
-    learn: "https://appwrite.io/docs",
-    connect: "https://appwrite.io/discord",
-    getInspired: "https://builtwith.appwrite.io",
-  });
 };
